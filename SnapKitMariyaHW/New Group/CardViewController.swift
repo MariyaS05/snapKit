@@ -7,9 +7,20 @@
 //По итогу хочу получить что бы за верхнее вью, я мог дернуть в стороны(bounce) наш контент.
 
 import UIKit
-import SnapKit 
+import SnapKit
+protocol CardControllerDelegate: AnyObject {
+    func didButtonTapped()
+}
 
-class ViewController: UIViewController,UIScrollViewDelegate {
+class CardViewController: UIViewController,UIScrollViewDelegate {
+    weak var delegate : CardControllerDelegate?
+    let burgerButton : UIButton = {
+        let image = UIImage(systemName: "line.3.horizontal")
+        let button = UIButton()
+        button.setImage(image, for: .normal)
+        return button
+    }()
+    
     let container : UIView = {
         let view =  UIView()
         return view
@@ -36,6 +47,7 @@ class ViewController: UIViewController,UIScrollViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .systemBackground
         scrollView.delegate = self
         view.addSubview(container)
         view.addSubview(scrollView)
@@ -43,8 +55,11 @@ class ViewController: UIViewController,UIScrollViewDelegate {
         container.addSubview(topView)
         container.addSubview(bigView)
         container.addSubview(buttonView)
+        container.addSubview(burgerButton)
 
         makeConstraints()
+        scrollView.isScrollEnabled = false
+        burgerButton.addTarget(self, action: #selector(burgetButtonTapped), for: .touchUpInside)
         
         
         
@@ -57,8 +72,8 @@ class ViewController: UIViewController,UIScrollViewDelegate {
         scrollView.snp.makeConstraints { make in
             make.left.equalTo(view.snp.left)
             make.right.equalTo(view.snp.right)
-            make.top.equalTo(view.snp.top)
-            make.bottom.equalTo(view.snp.bottom)
+            make.top.equalTo(view.snp.top).inset(50)
+//            make.bottom.equalTo(view.snp.bottom)
             make.height.equalTo(view.snp.height)
             make.width.equalTo(view.snp.width)
         }
@@ -85,6 +100,15 @@ class ViewController: UIViewController,UIScrollViewDelegate {
             make.height.equalTo(container.snp.height).multipliedBy(0.1)
             make.width.equalTo(315)
         }
+        burgerButton.snp.makeConstraints { make in
+            make.top.equalTo(container.snp.top)
+            make.left.equalTo(container.snp.left).inset(20)
+            make.width.height.equalTo(50)
+        }
     }
-}
+    @objc func burgetButtonTapped (){
+        delegate?.didButtonTapped()
+        }
+    }
+
 
