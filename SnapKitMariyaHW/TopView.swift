@@ -64,7 +64,7 @@ class TopView : UIView {
         labelStack.spacing = 32
         textFieldStack.axis = .vertical
         textFieldStack.distribution = .equalSpacing
-        textFieldStack.spacing = 15
+        textFieldStack.spacing = 16
   
         imageView.snp.makeConstraints { make in
             make.height.equalTo(125)
@@ -76,7 +76,7 @@ class TopView : UIView {
             make.left.equalTo(imageView.snp.right).inset(-5)
             make.top.equalTo(self)
             make.width.equalTo(60)
-//            make.height.equalTo(125)
+//
         }
         textFieldStack.snp.makeConstraints { make in
             make.left.equalTo(labelStack.snp.right).inset(-5)

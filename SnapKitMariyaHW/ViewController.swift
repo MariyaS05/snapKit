@@ -3,13 +3,17 @@
 //  SnapKitMariyaHW
 //
 //  Created by Мария  on 1.09.22.
-//
+//Переделать предыдущее ДЗ в ScrollView. Для UITextView сделать минимальный размер по высоте 300 и более (проверить введением длинного текста, можно отключить скрол). Верхнее view с textField - расстояние между textField сделать равным 16 и oбщий размер по высоте не задавать. Для нижнего вью с кнопками сделать высоту равную 0.1 от высоты экрана.
+//По итогу хочу получить что бы за верхнее вью, я мог дернуть в стороны(bounce) наш контент.
 
 import UIKit
 import SnapKit 
 
-class ViewController: UIViewController {
-    
+class ViewController: UIViewController,UIScrollViewDelegate {
+    let container : UIView = {
+        let view =  UIView()
+        return view
+    }()
     let topView: TopView = {
         let view = TopView()
         return view
@@ -18,61 +22,69 @@ class ViewController: UIViewController {
         let buttonView = ButtonView()
         return buttonView
     }()
-    let bigView : UIView = {
-        let view = UIView()
+    let bigView : UITextView = {
+        let view = UITextView()
         view.backgroundColor = UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)
+        view.font = UIFont(name: "System", size: 50)
+        view.isScrollEnabled = false
         return view
     }()
-    let labelText : UILabel = {
-        let label = UILabel()
-        label.text = "Notes:"
-        return label
+    let scrollView : UIScrollView = {
+        let scroll = UIScrollView()
+        return scroll
     }()
-    
 
     override func viewDidLoad() {
         super.viewDidLoad()
-       
-        view.addSubview(topView)
-        view.addSubview(bigView)
-        view.addSubview(buttonView)
-        bigView.addSubview(labelText)
-        
-        
-        bigView.snp.makeConstraints { make in
-            make.left.equalTo(view.snp.left).inset(20)
-            make.right.equalTo(view.snp.right).inset(20)
-            make.top.equalTo(topView.snp.bottom).inset(-20)
-            make.bottom.equalTo(buttonView.snp.top).inset(-20)
-//            make.height.equalTo(400)
-           
-        }
-        topView.snp.makeConstraints { make in
-            make.left.equalTo(view).inset(20)
-            make.right.equalTo(view).inset(20)
-            make.top.equalToSuperview().inset(55)
-            make.height.equalTo(125)
-           
-        }
-        buttonView.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().inset(16)
-            make.topMargin.equalTo(bigView.snp.bottom).inset(20)
-            make.centerX.equalTo(view.snp.centerX)
-            make.height.equalTo(30)
-            make.width.equalTo(315)
-        }
-        labelText.snp.makeConstraints { make in
-            make.left.top.right.equalTo(bigView).inset(10)
-            
-        }
-        
-        
-        
+        scrollView.delegate = self
+        view.addSubview(container)
+        view.addSubview(scrollView)
+        scrollView.addSubview(container)
+        container.addSubview(topView)
+        container.addSubview(bigView)
+        container.addSubview(buttonView)
+
+        makeConstraints()
         
         
         
     }
-
-
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        let view =  container
+        return view
+    }
+    func makeConstraints(){
+        scrollView.snp.makeConstraints { make in
+            make.left.equalTo(view.snp.left)
+            make.right.equalTo(view.snp.right)
+            make.top.equalTo(view.snp.top)
+            make.bottom.equalTo(view.snp.bottom)
+            make.height.equalTo(view.snp.height)
+            make.width.equalTo(view.snp.width)
+        }
+        container.snp.makeConstraints { make in
+            make.top.bottom.right.left.equalTo(scrollView)
+            make.height.equalTo(scrollView.snp.height).multipliedBy(1.01)
+            make.width.equalTo(scrollView.snp.width).multipliedBy(1.01)
+        }
+        bigView.snp.makeConstraints { make in
+            make.left.equalTo(container.snp.left).inset(20)
+            make.right.equalTo(container.snp.right).inset(20)
+            make.top.equalTo(topView.snp.bottom).inset(-40)
+            make.bottom.equalTo(buttonView.snp.top).inset(-30)
+            make.height.equalTo(450)
+        }
+        topView.snp.makeConstraints { make in
+            make.left.equalTo(container.snp.left).inset(20)
+            make.right.equalTo(container.snp.right).inset(20)
+            make.top.equalTo(container.snp.top).inset(70)
+        }
+        buttonView.snp.makeConstraints { make in
+            make.bottom.equalTo(container.snp.bottom).inset(50)
+            make.centerX.equalTo(container.snp.centerX)
+            make.height.equalTo(container.snp.height).multipliedBy(0.1)
+            make.width.equalTo(315)
+        }
+    }
 }
 
